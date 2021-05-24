@@ -1,54 +1,16 @@
 const {Router} = require('express');
-const CurriculimModel = require('../model/CurriculumModel');
+const CurriculumService = require('../service/CurriculumService');
 
 const router = Router();
 
-router.post('/', async(req, res) => {
-    
-    const curriculumModel = new CurriculimModel({
-        firstName: 'Sergio',
-        phoneNumber: '7222160908',
-        skills: [{
-            name: 'Java', percentage: 95
-        }]
-    });
+const curriculumService = new CurriculumService();
 
-    try {
-        const curriculumDoc = await curriculumModel.save();
-        res.status(201).json({
-            message: 'CV saved',
-            curriculumDoc
-        })
-    }catch(err) {
-        throw new Error("It was impossible to save the CV");
-    }
-})
+router.post('/', curriculumService.createCurriculum);
 
+router.get('/:resourceId', curriculumService.getCurriculumById);
 
-//Get a CV by ID
-router.get('/:resourceId', async(req, res) => {
-    const curriculumId = req.params.resourceId;
-    try {
-        const curriculumDoc = await CurriculimModel.findById(curriculumId);
-        res.status(200).json({
-            message: 'CV info',
-            curriculumDoc
-        }) 
-    } catch {
-        throw new Error(`The CV with ${curriculumId} does not exist`);
-    }
-})
-//Get all the CVs
-router.get('/', async(req, res) => {
-    try {
-        const curriculumDocs = await CurriculimModel.find({});
-        res.status(200).json({
-            message: 'CV info',
-            curriculumDocs
-        }) 
-    } catch {
-        throw new Error(`The CV with ${curriculumId} does not exist`);
-    }
-})
+router.get('/', curriculumService.getAllCurriculums);
+
+router.put('/:resourceId', curriculumService.updateCurriculum);
 
 module.exports = router;

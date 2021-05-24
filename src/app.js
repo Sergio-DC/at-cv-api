@@ -5,7 +5,7 @@ const app = express();
 const cvController = require('./controller/cvController');
 
 const API_BASE_URL = '/cv-api/person';
-
+app.use(express.json());
 app.use(API_BASE_URL, cvController); 
 
 module.exports = app.listen(process.env.PORT, () => {
