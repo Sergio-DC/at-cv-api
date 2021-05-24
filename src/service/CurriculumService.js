@@ -1,5 +1,4 @@
 const CurriculumModelODM = require('../model-odm/CurriculumModelODM');
-const CurriculumModel = require('../model/Curriculum');
 const express = require('express');
 const {request, response} = express;
 
