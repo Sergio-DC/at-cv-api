@@ -15,6 +15,9 @@ class CurriculumService {
             })
         }catch(err) {
             console.log("It was impossible to save the CV: ", err);
+            return res.status(400).json({
+                error: err.toString()
+            });
         }
     }
 
@@ -28,18 +31,24 @@ class CurriculumService {
             ) 
         } catch(err) {
             console.log(`The CV with id ${curriculumId} does not exist: `, err);
+            return res.status(400).json({
+                error: err.toString()
+            });
         }
     }
 
     async getAllCurriculums(req, res) {
         try {
             const curriculumDocs = await CurriculumModelODM.find({});
-            res.status(200).json({
-                message: 'CV info',
-                curriculumDocs
-            }) 
+            const setOfCleanCVs = curriculumDocs.reduce((setOfCleanCurriculums ,currentDirtyCurriculum) => {
+                setOfCleanCurriculums.push(CvCleaner.cleanCurriculumFromDB(currentDirtyCurriculum));
+                return setOfCleanCurriculums;
+            }, []);
+            res.status(200).json(setOfCleanCVs);
         } catch(err) {
-            console.log('Ther are no CVs: ', err);
+            return res.status(400).json({
+                error: err.toString()
+            });
         }
     }
 
@@ -49,11 +58,13 @@ class CurriculumService {
         
         CurriculumModelODM.updateOne({_id: resourceId}, curriculumFormUpdated,(err, writeOpResult) => {
             if(err)
-                console.log('The CV cannot be updated: ', err);
-            console.log('WriteOpResult: ', writeOpResult);
+                return res.status(400).json({
+                    error: err.toString()
+                });
+                
         })
 
-        res.status(200).json({
+        return res.status(200).json({
             message: 'CV updated'
         })
     }
