@@ -109,7 +109,7 @@ const curriculumSchema = new Schema({
         {
             name: String,
             date: String,
-            decription: String,
+            description: String,
             url: String,
         }
     ],
